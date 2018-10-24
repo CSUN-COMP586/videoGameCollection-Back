@@ -1,10 +1,9 @@
 package main
 
-import(
-"fmt"
-"github.com/videoGameLibrary/videogamelibrary/hello"
+import (
+	"fmt"
 )
 
 func main() {
-	fmt.Println(hello.BuildHello())
+	fmt.Println("hi")
 }
