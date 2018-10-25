@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
+	"github.com/videoGameLibrary/videogamelibrary/config/database"
 )
 
 func main() {
-	fmt.Println("hi")
+	database.OpenDatabaseConn()
 }
