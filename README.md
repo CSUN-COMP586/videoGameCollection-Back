@@ -14,12 +14,12 @@ Requirements:
 
 To launch the application locally:
   1.  PostGreSQL 9.5.14
-    1.  Create a database called 'vglib'
-    2.  Create a user called 'vglibdev'
-    3.  Create a password for user called 'abc123vglib'
-    4.  Grant all priveleges to user
+    1.  Create a database called 'vglib'.
+    2.  Create a user called 'vglibdev'.
+    3.  Create a password for user called 'abc123vglib'.
+    4.  Grant all priveleges to user.
   2.  Go version go1.10.3    
-    1.  Uncomment 'database.MigrateDependencyTables()' and 'database.MigrateTables()'
+    1.  Uncomment 'database.MigrateDependencyTables()' and 'database.MigrateTables()'.
     2.  Only run this once and check database for the tables.
 
 FOLDERS
