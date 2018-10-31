@@ -12,11 +12,12 @@ const dbConnectionString = "user=vglibdev password=abc123vglib dbname=vglib sslm
 
 // GormConn connection available to all packages
 var GormConn *gorm.DB
+var dialect = "postgres"
 
 func openDatabaseConn() {
 	var err error
 
-	GormConn, err = gorm.Open("postgres", dbConnectionString)
+	GormConn, err = gorm.Open(dialect, dbConnectionString)
 	if err != nil {
 		log.Fatal(err)
 	}

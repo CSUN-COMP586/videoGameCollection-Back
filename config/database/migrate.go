@@ -4,20 +4,18 @@
 
 package database
 
-import (
-	"github.com/videoGameLibrary/videogamelibrary/viewmodel"
-)
+import "github.com/videoGameLibrary/videogamelibrary/model"
 
 // MigrateDependencyTables function to migrate dependency models to the database
 func MigrateDependencyTables() {
 	GormConn.AutoMigrate(
-		&viewmodel.Account{}, &viewmodel.Developer{},
-		&viewmodel.People{}, &viewmodel.Publisher{})
+		&model.Account{}, &model.Developer{},
+		&model.People{}, &model.Publisher{})
 }
 
 // MigrateTables function to migrate models to database
 func MigrateTables() {
 	GormConn.AutoMigrate(
-		&viewmodel.Game{}, &viewmodel.Character{},
-		&viewmodel.History{}, &viewmodel.Search{})
+		&model.Game{}, &model.Character{},
+		&model.History{}, &model.Search{})
 }
