@@ -1,24 +1,27 @@
 package database
 
 import (
-	"fmt"
 	"log"
-	"os"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
-const postGresConnectionString = "POSTGRES_CONNECTION"
+// local testing
+const dbConnectionString = "user=vglibdev password=abc123vglib dbname=vglib sslmode=disable"
 
-var dbConnectionString = os.Getenv(postGresConnectionString)
+// GormConn connection available to all packages
+var GormConn *gorm.DB
 
-func OpenDatabaseConn() {
-	db, err := gorm.Open("postgres", dbConnectionString)
+func openDatabaseConn() {
+	var err error
+
+	GormConn, err = gorm.Open("postgres", dbConnectionString)
 	if err != nil {
 		log.Fatal(err)
-		fmt.Println(err)
 	}
+}
 
-	defer db.Close()
+func init() {
+	openDatabaseConn()
 }
