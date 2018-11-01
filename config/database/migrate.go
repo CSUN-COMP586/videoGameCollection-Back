@@ -4,18 +4,24 @@
 
 package database
 
-import "github.com/videoGameLibrary/videogamelibrary/model"
+import "github.com/videoGameLibrary/videogamelibrary/businesslogic"
 
 // MigrateDependencyTables function to migrate dependency models to the database
 func MigrateDependencyTables() {
+	GormConn.DropTableIfExists(
+		&businesslogic.Account{}, &businesslogic.Developer{},
+		&businesslogic.People{}, &businesslogic.Publisher{})
 	GormConn.AutoMigrate(
-		&model.Account{}, &model.Developer{},
-		&model.People{}, &model.Publisher{})
+		&businesslogic.Account{}, &businesslogic.Developer{},
+		&businesslogic.People{}, &businesslogic.Publisher{})
 }
 
 // MigrateTables function to migrate models to database
 func MigrateTables() {
+	GormConn.DropTableIfExists(
+		&businesslogic.Game{}, &businesslogic.Character{},
+		&businesslogic.History{}, &businesslogic.Search{})
 	GormConn.AutoMigrate(
-		&model.Game{}, &model.Character{},
-		&model.History{}, &model.Search{})
+		&businesslogic.Game{}, &businesslogic.Character{},
+		&businesslogic.History{}, &businesslogic.Search{})
 }

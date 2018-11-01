@@ -1,20 +1,22 @@
 package businesslogic
 
-import "time"
+import (
+	"time"
 
-// Game business logic
+	"github.com/jinzhu/gorm"
+)
+
+// Game model for database
 type Game struct {
-	ID            int
-	CreatedAt     time.Time
-	UpdatedAt     time.Time
-	DevID         int
-	PubID         int
-	Genre         string
-	SearchCreated time.Time
-	GameName      string
-	Summary       string
+	gorm.Model
+	DevID         int       `gorm:"REFERENCES DEVELOPERS(ID)"`
+	PubID         int       `gorm:"REFERENCES PUBLISHERS(ID)"`
+	Genre         string    `gorm:"TYPE:VARCHAR(32);NOT NULL"`
+	SearchCreated time.Time `gorm:"TYPE:TIMESTAMP;NOT NULL;DEFAULT NOW()"`
+	GameName      string    `gorm:"VARCHAR(128);NOT NULL;INDEX"`
+	Summary       string    `gorm:"TEXT;NOT NULL"`
 }
 
-func CreateGameEntry() {
+func CreateNewGameEntry() {
 
 }
