@@ -1,8 +1,6 @@
-package model
+package businesslogic
 
-import (
-	"github.com/jinzhu/gorm"
-)
+import "github.com/jinzhu/gorm"
 
 // Developer model for database
 type Developer struct {

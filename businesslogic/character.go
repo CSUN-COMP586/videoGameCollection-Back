@@ -1,8 +1,6 @@
-package model
+package businesslogic
 
-import (
-	"github.com/jinzhu/gorm"
-)
+import "github.com/jinzhu/gorm"
 
 // Character model for database
 type Character struct {

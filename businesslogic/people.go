@@ -1,8 +1,6 @@
-package model
+package businesslogic
 
-import (
-	"github.com/jinzhu/gorm"
-)
+import "github.com/jinzhu/gorm"
 
 // People model for database
 type People struct {

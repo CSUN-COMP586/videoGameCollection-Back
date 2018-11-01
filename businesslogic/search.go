@@ -1,8 +1,6 @@
-package model
+package businesslogic
 
-import (
-	"github.com/jinzhu/gorm"
-)
+import "github.com/jinzhu/gorm"
 
 // Search model for database
 type Search struct {
