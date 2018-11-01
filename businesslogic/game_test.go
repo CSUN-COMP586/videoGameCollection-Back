@@ -2,6 +2,6 @@ package businesslogic
 
 import "testing"
 
-func TestAddGameEntry(t *testing.T) {
+func TestCreateNewGameEntry(t *testing.T) {
 
 }

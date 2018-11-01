@@ -17,6 +17,20 @@ type Game struct {
 	Summary       string    `gorm:"TEXT;NOT NULL"`
 }
 
-func CreateNewGameEntry() {
-
+// Connection interface is used for polymorphism, allows for testing that is independent of the connection
+type Connection interface {
+	CreateNewGameEntry()
 }
+
+type GormConnection struct {
+	GormConn *gorm.DB
+}
+
+func (gc GormConnection) CreateNewGameEntry(model Game) {
+	gc.GormConn.Debug().Create(&model)
+	gc.GormConn.Debug().Save(&model)
+}
+
+// func (gc GormConnection) DeleteNewGAmeEntry(model Game) {
+// 	gc.GormConn.Debug().Delete(&model)
+// }
