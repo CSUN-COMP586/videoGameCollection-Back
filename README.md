@@ -26,7 +26,6 @@ FOLDERS
   1.  The businesslogic folder contains all of the logic regarding the functionality of the application.
   2.  The config folder contains configurations for the database.
   3.  The controller folder contains all of the calls for the endpoints.
-  4.  The model folder contains all of the models for the database and functions that deal with calculations.  
-  5.  The repository folder contains all of the database logic operations.
+  4.  The viewmodel folder contains all of models and functionality for the client side.  
 
 This will be updated as I continue to work on the application.
