@@ -27,4 +27,6 @@ _testmain.go
 *.test
 *.prof
 
+# custom
 Makefile
+*.sh

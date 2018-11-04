@@ -6,6 +6,10 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+type Handler interface {
+	CreateNewGameEntry()
+}
+
 // Game model for database
 type Game struct {
 	gorm.Model
@@ -17,18 +21,17 @@ type Game struct {
 	Summary       string    `gorm:"TEXT;NOT NULL"`
 }
 
-// Connection interface is used for polymorphism, allows for testing that is independent of the connection
-type Connection interface {
-	CreateNewGameEntry()
+// GameHandler handles the gorm model that is to be manipulated
+type GameHandler struct {
+	Model *Game
 }
 
-type GormConnection struct {
-	GormConn *gorm.DB
-}
-
-func (gc GormConnection) CreateNewGameEntry(model Game) {
-	gc.GormConn.Debug().Create(&model)
-	gc.GormConn.Debug().Save(&model)
+func (gh GameHandler) CreateNewGameEntry(conn *gorm.DB) (uint, error) {
+	err := conn.Create(&gh.Model).Error
+	if err != nil {
+		return 0, err
+	}
+	return gh.Model.ID, nil
 }
 
 // func (gc GormConnection) DeleteNewGAmeEntry(model Game) {
