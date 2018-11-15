@@ -6,7 +6,7 @@ import "github.com/jinzhu/gorm"
 type People struct {
 	gorm.Model
 	PersonName string `gorm:"TYPE:VARCHAR(32);NOT NULL;INDEX"`
-	Gender     bool   `gorm:"NOT NULL"`
-	VoiceActed []int  `gorm:"TYPE:INTEGER[];NOT NULL"`
-	Characters []int  `gorm:"TYPE:INTEGER[];NOT NULL"`
+	Gender     bool
+	VoiceActed []int `gorm:"TYPE:INTEGER[]"`
+	Characters []int `gorm:"TYPE:INTEGER[]"`
 }
