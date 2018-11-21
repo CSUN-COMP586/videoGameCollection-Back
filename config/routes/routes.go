@@ -13,6 +13,7 @@ func NewCollectionRouter() http.Handler {
 	router.HandleFunc("/", temp)
 
 	mount(router, "/game/", GameRouter()) // sub-routes
+	mount(router, "/search/", SearchRouter())
 
 	return router
 }
