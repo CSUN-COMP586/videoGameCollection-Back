@@ -52,7 +52,7 @@ func (handler GameHandler) CreateNewGameEntry(conn *gorm.DB) (uint, error) {
 
 func (handler GameHandler) GetGameEntry(conn *gorm.DB) (*Game, error) {
 	// return error if game is not in the collection
-	if conn.Where(&Game{GameName: handler.Model.GameName}).Find(&handler.Model).RecordNotFound() != false {
+	if conn.Where(&Game{GameID: handler.Model.GameID}).Find(&handler.Model).RecordNotFound() != false {
 		err := errors.New(handler.Model.GameName + " is not in the collection")
 		return handler.Model, err
 	}
