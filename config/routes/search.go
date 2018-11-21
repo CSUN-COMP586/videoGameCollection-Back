@@ -10,7 +10,7 @@ import (
 func SearchRouter() http.Handler {
 	router := mux.NewRouter()
 
-	router.Path("/game").Methods("GET").HandlerFunc(controller.SearchForGame)
+	router.Path("/game/{query}").Methods("GET").HandlerFunc(controller.SearchForGame)
 
 	return router
 }

@@ -4,6 +4,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 func SearchForGame(w http.ResponseWriter, r *http.Request) {
@@ -12,8 +14,8 @@ func SearchForGame(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	r.ParseForm() // parse the request and get the query value
-	query := r.Form.Get("query")
+	vars := mux.Vars(r)
+	query := vars["query"]
 
 	client := &http.Client{} // create request
 	req, err := http.NewRequest(
