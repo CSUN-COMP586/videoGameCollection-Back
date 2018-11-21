@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"io/ioutil"
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -9,12 +9,12 @@ import (
 )
 
 func SearchForGame(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
+	if r.Method != http.MethodGet { // method check
 		http.Error(w, "Method not supported", 405)
 		return
 	}
 
-	vars := mux.Vars(r)
+	vars := mux.Vars(r) // get route variables
 	query := vars["query"]
 
 	client := &http.Client{} // create request
@@ -35,13 +35,21 @@ func SearchForGame(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	searchJSON, err := ioutil.ReadAll(res.Body) // convert reader to bytes
+	search := make([]map[string]interface{}, 1) // decode response body to an array of dict
+	err = json.NewDecoder(res.Body).Decode(&search)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+
+	searchJSON, err := json.Marshal(search) // convert to a json
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8") // write json to response
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
 	w.Write(searchJSON)
 }
