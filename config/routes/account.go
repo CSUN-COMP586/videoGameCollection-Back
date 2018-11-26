@@ -7,10 +7,10 @@ import (
 	"github.com/videoGameLibrary/videogamelibrary/controller"
 )
 
-func SearchRouter() http.Handler {
+func AccountRouter() http.Handler {
 	router := mux.NewRouter()
 
-	router.Path("/game/{query}").Methods(http.MethodGet).HandlerFunc(controller.SearchForGame)
+	router.Path("/create").Methods(http.MethodPost).HandlerFunc(controller.CreateNewAccount)
 
 	return router
 }
