@@ -14,6 +14,7 @@ func NewCollectionRouter() http.Handler {
 
 	mount(router, "/game/", GameRouter()) // sub-routes
 	mount(router, "/search/", SearchRouter())
+	mount(router, "/account/", AccountRouter())
 
 	return router
 }

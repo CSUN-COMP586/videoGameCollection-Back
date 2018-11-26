@@ -10,9 +10,9 @@ import (
 func GameRouter() http.Handler {
 	router := mux.NewRouter()
 
-	router.Path("/get").Methods("GET").HandlerFunc(controller.GetGameEntry)
-	router.Path("/add").Methods("POST").HandlerFunc(controller.AddGameEntry)
-	router.Path("/delete").Methods("DELETE").HandlerFunc(controller.DeleteGameEntry)
+	router.Path("/get").Methods(http.MethodGet).HandlerFunc(controller.GetGameEntry)
+	router.Path("/add").Methods(http.MethodPost).HandlerFunc(controller.AddGameEntry)
+	router.Path("/delete").Methods(http.MethodDelete).HandlerFunc(controller.DeleteGameEntry)
 
 	return router
 }
