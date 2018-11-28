@@ -4,8 +4,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/videoGameLibrary/videogamelibrary/config/database"
-	"github.com/videoGameLibrary/videogamelibrary/config/routes"
+	"github.com/videogamelibrary/config/database"
+	"github.com/videogamelibrary/config/routes"
 )
 
 func main() {

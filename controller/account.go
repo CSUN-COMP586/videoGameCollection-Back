@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/videoGameLibrary/videogamelibrary/businesslogic"
-	"github.com/videoGameLibrary/videogamelibrary/config/database"
+	"github.com/videogamelibrary/businesslogic"
+	"github.com/videogamelibrary/config/database"
 )
 
 func CreateNewAccount(w http.ResponseWriter, r *http.Request) {
