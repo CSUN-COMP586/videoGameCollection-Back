@@ -6,7 +6,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"github.com/videoGameLibrary/videogamelibrary/businesslogic"
+	"github.com/videogamelibrary/businesslogic"
 )
 
 // initialize environment variables

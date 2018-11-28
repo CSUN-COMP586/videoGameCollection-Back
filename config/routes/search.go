@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/videoGameLibrary/videogamelibrary/controller"
+	"github.com/videogamelibrary/controller"
 )
 
 func SearchRouter() http.Handler {
