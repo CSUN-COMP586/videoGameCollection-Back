@@ -2,18 +2,18 @@ package database
 
 import (
 	"log"
-	"os"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/videogamelibrary/businesslogic"
+	"github.com/videogamelibrary/config/middleware"
 )
 
 // initialize environment variables
 var (
-	DBNAME             = getEnv("DBNAME", "vglib")
-	DBUSER             = getEnv("DBUSER", "vglibdev")
-	DBPASS             = getEnv("DBPASS", "abc123vglib")
+	DBNAME             = middleware.GetEnv("DBNAME", "vglib")
+	DBUSER             = middleware.GetEnv("DBUSER", "vglibdev")
+	DBPASS             = middleware.GetEnv("DBPASS", "abc123vglib")
 	dbConnectionString = "user=" + DBUSER + " password=" + DBPASS + " dbname=" + DBNAME + " sslmode=disable"
 	dialect            = "postgres"
 )
@@ -37,14 +37,6 @@ func openDatabaseConnection(dialect string, dbConnectionString string) *gorm.DB 
 	}
 
 	return db
-}
-
-func getEnv(key, defaultValue string) string {
-	value := os.Getenv(key)
-	if len(value) == 0 {
-		return defaultValue
-	}
-	return value
 }
 
 // MigrateDependencyTables - These functions should be used in their respective order
