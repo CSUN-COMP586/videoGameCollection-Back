@@ -1,9 +1,9 @@
 package businesslogic
 
 import (
+	"errors"
 	"log"
 	"regexp"
-	"time"
 
 	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
@@ -20,13 +20,18 @@ type IAccount interface {
 // Account model for database
 type Account struct {
 	gorm.Model
-	Username      string    `gorm:"TYPE:VARCHAR(16);UNIQUE;NOT NULL;INDEX"`
-	FirstName     string    `gorm:"TYPE:VARCHAR(64);NOT NULL"`
-	LastName      string    `gorm:"TYPE:VARCHAR(64);NOT NULL"`
-	DateOfBirth   time.Time `gorm:"TYPE:DATE;NOT NULL"`
-	Email         string    `gorm:"TYPE:TEXT;UNIQUE;NOT NULL"`
-	EmailVerified bool      `gorm:"TYPE:BOOLEAN;NOT NULL;DEFAULT FALSE"`
-	Password      string    `gorm:"TYPE:TEXT;NOT NULL"`
+	Username      string `gorm:"TYPE:VARCHAR(16);UNIQUE;NOT NULL;INDEX"`
+	FirstName     string `gorm:"TYPE:VARCHAR(64);NOT NULL"`
+	LastName      string `gorm:"TYPE:VARCHAR(64);NOT NULL"`
+	DateOfBirth   string `gorm:"TYPE:VARCHAR(12);NOT NULL"`
+	Email         string `gorm:"TYPE:TEXT;UNIQUE;NOT NULL"`
+	EmailVerified bool   `gorm:"TYPE:BOOLEAN;NOT NULL;DEFAULT FALSE"`
+	Password      string `gorm:"TYPE:VARCHAR(64);NOT NULL"`
+}
+
+type Login struct {
+	Username string
+	Password string
 }
 
 type AccountHandler struct {
@@ -37,6 +42,8 @@ func (handler AccountHandler) CreateNewAccount(conn *gorm.DB) string {
 	var message string
 	reUser := regexp.MustCompile("accounts_username_key")
 	reEmail := regexp.MustCompile("accounts_email_key")
+
+	handler.Model.Password = hashAndSalt([]byte(handler.Model.Password)) // hash password
 
 	// create new account, return error message if connection error occurs
 	if err := conn.Create(&handler.Model).Error; err != nil {
@@ -58,9 +65,9 @@ func (handler AccountHandler) CreateNewAccount(conn *gorm.DB) string {
 	return message
 }
 
-// function to hash and salt password for CreateNewAccount()
+// function to hash and salt password for CreateNewAccount() controller
 func hashAndSalt(pwd []byte) string {
-	hash, err := bcrypt.GenerateFromPassword(pwd, bcrypt.DefaultCost)
+	hash, err := bcrypt.GenerateFromPassword(pwd, bcrypt.MinCost)
 	if err != nil {
 		log.Println(err)
 	}
@@ -68,8 +75,22 @@ func hashAndSalt(pwd []byte) string {
 	return string(hash)
 }
 
-func (handler AccountHandler) GetAccount(conn *gorm.DB) {
+// GetAccount function that checks user login credentials
+func (handler AccountHandler) GetAccount(conn *gorm.DB, creds *Login) (bool, error) {
+	// Checks if username is in the database and return model, otherwise return error
+	if conn.Where(&Account{Username: creds.Username}).Find(&handler.Model).RecordNotFound() != false {
+		err := errors.New("Invalid username")
+		return false, err
+	}
 
+	// compares the hash password with the plain password
+	response := comparePasswords(handler.Model.Password, []byte(creds.Password))
+	if response != true {
+		err := errors.New("Invalid password")
+		return false, err
+	}
+
+	return response, nil
 }
 
 // function to compare verify hash for GetAccount()
@@ -83,4 +104,8 @@ func comparePasswords(hashedPwd string, plainPwd []byte) bool {
 	}
 
 	return true
+}
+
+func (handler AccountHandler) VerifyEmail() {
+
 }
