@@ -28,11 +28,13 @@ type Account struct {
 	Email         string `gorm:"TYPE:TEXT;UNIQUE;NOT NULL"`
 	EmailVerified bool   `gorm:"TYPE:BOOLEAN;NOT NULL;DEFAULT FALSE"`
 	Password      string `gorm:"TYPE:VARCHAR(64);NOT NULL"`
+	RefreshToken  string `gorm:"TYPE:TEXT;UNIQUE"`
 }
 
 type Login struct {
-	UID      string
-	Password string
+	UID          string
+	Password     string
+	RefreshToken string
 }
 
 type AccountHandler struct {
