@@ -20,6 +20,7 @@ type IAccount interface {
 // Account model for database
 type Account struct {
 	gorm.Model
+	UID           string `gorm:"TYPE:TEXT;UNIQUE`
 	Username      string `gorm:"TYPE:VARCHAR(16);UNIQUE;NOT NULL;INDEX"`
 	FirstName     string `gorm:"TYPE:VARCHAR(64);NOT NULL"`
 	LastName      string `gorm:"TYPE:VARCHAR(64);NOT NULL"`
@@ -30,7 +31,7 @@ type Account struct {
 }
 
 type Login struct {
-	Username string
+	UID      string
 	Password string
 }
 
@@ -38,7 +39,7 @@ type AccountHandler struct {
 	Model *Account
 }
 
-func (handler AccountHandler) CreateNewAccount(conn *gorm.DB) string {
+func (handler AccountHandler) CreateNewAccount(conn *gorm.DB) (string, bool) {
 	var message string
 	reUser := regexp.MustCompile("accounts_username_key")
 	reEmail := regexp.MustCompile("accounts_email_key")
@@ -56,13 +57,13 @@ func (handler AccountHandler) CreateNewAccount(conn *gorm.DB) string {
 		if reUser.MatchString(err.Error()) == true && reEmail.MatchString(err.Error()) == true {
 			message = "Username and Email already exists."
 		}
-		return message
+		return message, false
 	}
 
 	// return success message
 	message = "Account successfully created.  Please verify e-mail address."
 
-	return message
+	return message, true
 }
 
 // function to hash and salt password for CreateNewAccount() controller
@@ -78,8 +79,8 @@ func hashAndSalt(pwd []byte) string {
 // GetAccount function that checks user login credentials
 func (handler AccountHandler) GetAccount(conn *gorm.DB, creds *Login) (bool, error) {
 	// Checks if username is in the database and return model, otherwise return error
-	if conn.Where(&Account{Username: creds.Username}).Find(&handler.Model).RecordNotFound() != false {
-		err := errors.New("Invalid username")
+	if conn.Where(&Account{UID: creds.UID}).Find(&handler.Model).RecordNotFound() != false {
+		err := errors.New("Invalid user identification")
 		return false, err
 	}
 
