@@ -2,11 +2,12 @@ package controller
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
-	"time"
+	"strings"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/videogamelibrary/businesslogic"
@@ -26,14 +27,15 @@ func CreateNewAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	handler := businesslogic.AccountHandler{ // create handler for account struct
+	accountHandler := businesslogic.AccountHandler{ // create accountHandler for account struct
 		Model: &account,
 	}
 
 	// create new account and record message
-	message := handler.CreateNewAccount(database.GormConn)
-	response := make(map[string]string)
+	message, status := accountHandler.CreateNewAccount(database.GormConn)
+	response := make(map[string]interface{})
 	response["message"] = message
+	response["status"] = status
 
 	responseJSON, err := json.Marshal(response) // convert message to json
 	if err != nil {
@@ -41,6 +43,8 @@ func CreateNewAccount(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 		return
 	}
+
+	// email verification
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
@@ -60,19 +64,30 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// create handler and account struct, then get account
+	// decode jwt and assign uid to login struct
+	idToken := r.Header.Get("authorization")
+	stringToken := strings.Fields(idToken)
+	token, err := jwt.Parse(stringToken[1], func(token *jwt.Token) (interface{}, error) {
+		key, err := ioutil.ReadFile("your-private-key.pem")
+		if err != nil {
+			return nil, errors.New("private key could not be loaded")
+		}
+		return key, nil
+	})
+	creds.UID = token.Claims.(jwt.MapClaims)["user_id"].(string)
+
+	// create account handler and account struct, then get account to login
 	account := businesslogic.Account{}
-	handler := businesslogic.AccountHandler{
+	accountHandler := businesslogic.AccountHandler{
 		Model: &account,
 	}
-	loginStatus, err := handler.GetAccount(database.GormConn, &creds)
-
+	loginStatus, err := accountHandler.GetAccount(database.GormConn, &creds)
 	if err != nil {
 		fmt.Println("login failure")
 		log.Fatal(err)
 	}
 
-	response := make(map[string]string)
+	response := make(map[string]interface{})
 
 	// if login failed then encode fail response and write to response writer
 	if loginStatus != true {
@@ -88,21 +103,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		w.Write(responseJSON)
 	}
 
-	// otherwise create a jwt
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub":  handler.Model.ID,
-		"exp":  time.Now().Add(time.Minute * 15),
-		"role": "user",
-		"csrf": os.Getenv("CSRF_KEY"),
-	})
-	tokenString, err := token.SignedString([]byte(os.Getenv("SECRET_SIGN_KEY")))
-	if err != nil {
-		fmt.Println("signed string error")
-		log.Fatal(err)
-	}
-
-	// encode the token and write to response writer
-	response["token"] = tokenString
+	// encode message and write to response writer
+	response["message"] = true
 	responseJSON, err := json.Marshal(response)
 	if err != nil {
 		fmt.Println("error encoding loginStatus == true")
