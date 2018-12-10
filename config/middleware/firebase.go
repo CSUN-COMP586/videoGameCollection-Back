@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 
@@ -10,11 +9,14 @@ import (
 	"google.golang.org/api/option"
 )
 
+// App the firebase application variable to be passed around other files
+var App *firebase.App
+
 func init() {
+	var err error
 	opt := option.WithCredentialsFile(os.Getenv("FIREBASE_SERVICE_ACCOUNT_PATH"))
-	app, err := firebase.NewApp(context.Background(), nil, opt)
+	App, err = firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
 		log.Fatalf("error initializing app: %v\n", err)
 	}
-	fmt.Println(app)
 }
