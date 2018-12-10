@@ -65,7 +65,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	idToken := r.Header.Get("authorization")
 	authModel := middleware.Auth{Token: idToken}
 	authHandler := middleware.AuthHandler{Model: &authModel}
-	creds.UID = authHandler.VerifyTokenAndReturnUID()
+	creds.UID = authHandler.VerifyTokenAndReturnUID(middleware.App)
 
 	// create account handler and account struct, then get account to login
 	account := businesslogic.Account{}

@@ -4,6 +4,8 @@ import (
 	"context"
 	"log"
 	"strings"
+
+	firebase "firebase.google.com/go"
 )
 
 type Auth struct {
@@ -14,11 +16,11 @@ type AuthHandler struct {
 	Model *Auth
 }
 
-func (handler AuthHandler) VerifyTokenAndReturnUID() string {
+func (handler AuthHandler) VerifyTokenAndReturnUID(app *firebase.App) string {
 	stringToken := strings.Fields(handler.Model.Token)
 	handler.Model.Token = stringToken[1]
 
-	client, err := App.Auth(context.Background())
+	client, err := app.Auth(context.Background())
 	if err != nil {
 		log.Fatal("Error getting auth client: %v\n", err)
 	}
