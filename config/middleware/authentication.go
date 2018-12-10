@@ -1,27 +1,60 @@
 package middleware
 
-// type Auth struct {
-// 	Sub  uint
-// 	Role string
-// }
+import (
+	"context"
+	"log"
+	"strings"
+)
 
-// type AuthHandler struct {
-// 	Model *Auth
-// }
+type Auth struct {
+	Token string
+}
 
-// // CreateToken creates and returns a jwt token
-// func (handler AuthHandler) CreateToken() string {
-// 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-// 		"sub":  handler.Model.Sub,
-// 		"exp":  time.Now().Add(time.Minute * 15),
-// 		"role": handler.Model.Role,
-// 		"csrf": os.Getenv("CSRF_KEY"),
+type AuthHandler struct {
+	Model *Auth
+}
+
+func (handler AuthHandler) VerifyTokenAndReturnUID() string {
+	stringToken := strings.Fields(handler.Model.Token)
+	handler.Model.Token = stringToken[1]
+
+	client, err := App.Auth(context.Background())
+	if err != nil {
+		log.Fatal("Error getting auth client: %v\n", err)
+	}
+
+	ctx := context.Background()
+	token, err := client.VerifyIDToken(ctx, handler.Model.Token)
+	if err != nil {
+		log.Fatalf("error verifying ID token: %v\n", err)
+	}
+
+	return token.UID
+}
+
+// func (handler AuthHandler) DecodeToken(token string) {
+// 	stringToken := strings.Fields(token)
+// 	parsedToken, err := jwt.Parse(stringToken[1], func(token *jwt.Token) (interface{}, error) {
+// 		// if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+// 		// 	return nil, fmt.Errorf("There was an error")
+// 		// }
+// 		return "hello friends", nil
 // 	})
-// 	tokenString, err := token.SignedString([]byte(os.Getenv("SECRET_SIGN_KEY")))
 // 	if err != nil {
-// 		fmt.Println("signed string error")
+// 		fmt.Println("Error parsing token")
 // 		log.Fatal(err)
 // 	}
+// 	handler.Model.UID = parsedToken.Claims.(jwt.MapClaims)["user_id"].(string)
+// }
 
-// 	return tokenString
+// func (handler AuthHandler) Authenticate(conn *gorm.DB) (bool, error) {
+// 	account := businesslogic.Account{}
+
+// 	if conn.Where(&businesslogic.Account{UID: handler.Model.UID}).Find(&account).RecordNotFound() != false {
+// 		err := errors.New("Invalid user identification")
+// 		return false, err
+// 	}
+// 	fmt.Println(account)
+
+// 	return true, nil
 // }
