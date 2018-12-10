@@ -2,16 +2,13 @@ package controller
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
-	"strings"
 
-	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/videogamelibrary/businesslogic"
 	"github.com/videogamelibrary/config/database"
+	"github.com/videogamelibrary/config/middleware"
 )
 
 func CreateNewAccount(w http.ResponseWriter, r *http.Request) {
@@ -66,15 +63,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	// decode jwt and assign uid to login struct
 	idToken := r.Header.Get("authorization")
-	stringToken := strings.Fields(idToken)
-	token, err := jwt.Parse(stringToken[1], func(token *jwt.Token) (interface{}, error) {
-		key, err := ioutil.ReadFile("your-private-key.pem")
-		if err != nil {
-			return nil, errors.New("private key could not be loaded")
-		}
-		return key, nil
-	})
-	creds.UID = token.Claims.(jwt.MapClaims)["user_id"].(string)
+	authModel := middleware.Auth{Token: idToken}
+	authHandler := middleware.AuthHandler{Model: &authModel}
+	creds.UID = authHandler.VerifyTokenAndReturnUID(middleware.App)
 
 	// create account handler and account struct, then get account to login
 	account := businesslogic.Account{}
@@ -83,7 +74,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 	loginStatus, err := accountHandler.GetAccount(database.GormConn, &creds)
 	if err != nil {
-		fmt.Println("login failure")
+		fmt.Println("Error during server login: " + err.Error())
 		log.Fatal(err)
 	}
 
@@ -94,7 +85,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		response["message"] = err.Error()
 		responseJSON, err := json.Marshal(response)
 		if err != nil {
-			fmt.Println("error encoding loginStatus != true")
+			fmt.Println("Error encoding login failure status: " + err.Error())
 			log.Fatal(err)
 		}
 
@@ -104,10 +95,10 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// encode message and write to response writer
-	response["message"] = true
+	response["message"] = loginStatus
 	responseJSON, err := json.Marshal(response)
 	if err != nil {
-		fmt.Println("error encoding loginStatus == true")
+		fmt.Println("Error encoding login success status: " + err.Error())
 		log.Fatal(err)
 	}
 

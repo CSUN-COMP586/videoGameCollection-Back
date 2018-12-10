@@ -54,8 +54,8 @@ func MigrateDependencyTables() {
 func MigrateTables() {
 	GormConn.DropTableIfExists(
 		&businesslogic.Game{}, &businesslogic.Character{},
-		&businesslogic.History{}, &businesslogic.Search{})
+		&businesslogic.History{}, &businesslogic.SearchHistory{})
 	GormConn.AutoMigrate(
 		&businesslogic.Game{}, &businesslogic.Character{},
-		&businesslogic.History{}, &businesslogic.Search{})
+		&businesslogic.History{}, &businesslogic.SearchHistory{})
 }

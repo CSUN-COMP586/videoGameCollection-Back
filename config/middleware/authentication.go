@@ -1,27 +1,35 @@
 package middleware
 
-// type Auth struct {
-// 	Sub  uint
-// 	Role string
-// }
+import (
+	"context"
+	"log"
+	"strings"
 
-// type AuthHandler struct {
-// 	Model *Auth
-// }
+	firebase "firebase.google.com/go"
+)
 
-// // CreateToken creates and returns a jwt token
-// func (handler AuthHandler) CreateToken() string {
-// 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-// 		"sub":  handler.Model.Sub,
-// 		"exp":  time.Now().Add(time.Minute * 15),
-// 		"role": handler.Model.Role,
-// 		"csrf": os.Getenv("CSRF_KEY"),
-// 	})
-// 	tokenString, err := token.SignedString([]byte(os.Getenv("SECRET_SIGN_KEY")))
-// 	if err != nil {
-// 		fmt.Println("signed string error")
-// 		log.Fatal(err)
-// 	}
+type Auth struct {
+	Token string
+}
 
-// 	return tokenString
-// }
+type AuthHandler struct {
+	Model *Auth
+}
+
+func (handler AuthHandler) VerifyTokenAndReturnUID(app *firebase.App) string {
+	stringToken := strings.Fields(handler.Model.Token) // split 'beaer' and token
+	handler.Model.Token = stringToken[1]
+
+	client, err := app.Auth(context.Background()) // initialize firebase client for auth
+	if err != nil {
+		log.Fatal("Error getting auth client: %v\n", err)
+	}
+
+	ctx := context.Background()
+	token, err := client.VerifyIDToken(ctx, handler.Model.Token) // verify the token
+	if err != nil {
+		log.Fatalf("error verifying ID token: %v\n", err)
+	}
+
+	return token.UID // return UID
+}

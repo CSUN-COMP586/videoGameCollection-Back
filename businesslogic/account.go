@@ -2,6 +2,7 @@ package businesslogic
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"regexp"
 
@@ -28,6 +29,7 @@ type Account struct {
 	Email         string `gorm:"TYPE:TEXT;UNIQUE;NOT NULL"`
 	EmailVerified bool   `gorm:"TYPE:BOOLEAN;NOT NULL;DEFAULT FALSE"`
 	Password      string `gorm:"TYPE:VARCHAR(64);NOT NULL"`
+	RefreshToken  string `gorm:"TYPE:TEXT;UNIQUE"`
 }
 
 type Login struct {
@@ -109,4 +111,13 @@ func comparePasswords(hashedPwd string, plainPwd []byte) bool {
 
 func (handler AccountHandler) VerifyEmail() {
 
+}
+
+func (handler AccountHandler) VerifyUID(conn *gorm.DB, userID string) (bool, error) {
+	if conn.Where(&Account{UID: userID}).Find(&handler.Model).RecordNotFound() != false {
+		err := errors.New("Invalid user identification")
+		return false, err
+	}
+	fmt.Println(handler.Model)
+	return true, nil
 }
