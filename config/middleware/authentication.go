@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"strings"
 
@@ -28,7 +29,7 @@ func (handler AuthHandler) VerifyTokenAndReturnUID(app *firebase.App) string {
 	ctx := context.Background()
 	token, err := client.VerifyIDToken(ctx, handler.Model.Token) // verify the token
 	if err != nil {
-		log.Fatalf("error verifying ID token: %v\n", err)
+		fmt.Println("Error verifying ID token: ", err.Error())
 	}
 
 	return token.UID // return UID

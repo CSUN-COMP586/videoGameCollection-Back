@@ -20,24 +20,4 @@ func main() {
 		handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}),
 		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}),
 		handlers.AllowedOrigins([]string{"*"}))(router)))
-
-	// testing
-	// creds := businesslogic.Login{
-	// 	Username: "breh",
-	// 	Password: "blah123",
-	// }
-
-	// account := businesslogic.Account{}
-
-	// handler := businesslogic.AccountHandler{
-	// 	Model: &account,
-	// }
-
-	// loginStatus, err := handler.GetAccount(database.GormConn, &creds)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-
-	// fmt.Println(loginStatus)
-
 }

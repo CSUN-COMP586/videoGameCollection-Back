@@ -19,12 +19,13 @@ func SearchForGame(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	response := make(map[string]interface{})
+
 	// verify token and return UID
 	idToken := r.Header.Get("authorization")
 	authModel := middleware.Auth{Token: idToken}
 	authHandler := middleware.AuthHandler{Model: &authModel}
 	UID := authHandler.VerifyTokenAndReturnUID(middleware.App)
-	response := make(map[string]interface{})
 
 	// verify UID and return true or false
 	account := businesslogic.Account{}
@@ -51,7 +52,18 @@ func SearchForGame(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r) // get route variables
 	query := vars["query"]
 
-	client := &http.Client{} // create request to IGDB API
+	// create search history struct and insert to database
+	searchHistory := businesslogic.SearchHistory{
+		AccountID: accountHandler.Model.ID,
+		Query:     query,
+	}
+	searchHistoryHandler := businesslogic.SearchHistoryHandler{
+		Model: &searchHistory,
+	}
+	searchHistoryHandler.CreateNewEntry(database.GormConn)
+
+	// create request to IGDB API
+	client := &http.Client{}
 	req, err := http.NewRequest(
 		http.MethodGet,
 		"https://api-endpoint.igdb.com/games/?search="+query+"&fields=id,name",
