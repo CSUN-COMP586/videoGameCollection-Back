@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -19,42 +18,19 @@ func SearchForGame(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := make(map[string]interface{})
-
-	// verify token and return UID
-	idToken := r.Header.Get("authorization")
-	authModel := middleware.Auth{Token: idToken}
-	authHandler := middleware.AuthHandler{Model: &authModel}
-	UID := authHandler.VerifyTokenAndReturnUID(middleware.App)
-
-	// verify UID and return true or false
-	account := businesslogic.Account{}
-	accountHandler := businesslogic.AccountHandler{Model: &account}
-	verifyStatus, err := accountHandler.VerifyUID(database.GormConn, UID)
-	if err != nil {
-		fmt.Println("Verify UID error: ", err.Error())
-	}
+	// verify token, return status of verification, users account id, and potential errors
+	verifyStatus, accountID, err := middleware.VerifyToken(r, middleware.App, database.GormConn)
 
 	// if status is false, send response to front end
-	if verifyStatus != true {
-		response["message"] = "UID not verified." + err.Error()
-		responseJSON, err := json.Marshal(response)
-		if err != nil {
-			fmt.Println("Error encoding search controller UID verification: " + err.Error())
-			log.Fatal(err)
-		}
+	middleware.HandleFalseVerification(verifyStatus, w, err)
 
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(http.StatusOK)
-		w.Write(responseJSON)
-	}
-
-	vars := mux.Vars(r) // get route variables
+	// get route variables
+	vars := mux.Vars(r)
 	query := vars["query"]
 
 	// create search history struct and insert to database
 	searchHistory := businesslogic.SearchHistory{
-		AccountID: accountHandler.Model.ID,
+		AccountID: accountID,
 		Query:     query,
 	}
 	searchHistoryHandler := businesslogic.SearchHistoryHandler{
@@ -75,26 +51,30 @@ func SearchForGame(w http.ResponseWriter, r *http.Request) {
 	}
 	req.Header.Set("user-key", os.Getenv("IGDB_USER_KEY"))
 
-	res, err := client.Do(req) // send request to IGDB API
+	// send request to IGDB API
+	res, err := client.Do(req)
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
 
-	search := make([]map[string]interface{}, 1) // decode response body to an array of dict
+	// decode response body to an array of dict
+	search := make([]map[string]interface{}, 1)
 	err = json.NewDecoder(res.Body).Decode(&search)
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
 
-	searchJSON, err := json.Marshal(search) // convert to a json
+	// convert to a json
+	searchJSON, err := json.Marshal(search)
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8") // write json to response
+	// write json to response
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
 	w.Write(searchJSON)
