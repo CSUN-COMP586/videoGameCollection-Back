@@ -2,7 +2,6 @@ package businesslogic
 
 import (
 	"errors"
-	"time"
 
 	"github.com/jinzhu/gorm"
 )
@@ -16,11 +15,11 @@ type IGame interface {
 // Game model for database
 type Game struct {
 	gorm.Model
-	GameID        int       `gorm:"NOT NULL; INDEX"`
-	SearchCreated time.Time `gorm:"TYPE:TIMESTAMP;NOT NULL;DEFAULT NOW()"`
-	GameName      string    `gorm:"VARCHAR(128);NOT NULL;INDEX"`
-	Summary       string    `gorm:"TEXT"`
-	ImageURL      string    `gorm:"TYPE:TEXT`
+	AccountID uint   `gorm:"NOT NULL; REFERENCES ACCOUNTS(ID)`
+	GameID    int    `gorm:"NOT NULL; INDEX"`
+	GameName  string `gorm:"VARCHAR(128);NOT NULL;INDEX"`
+	Summary   string `gorm:"TEXT"`
+	ImageURL  string `gorm:"TYPE:TEXT`
 }
 
 // GameHandler handles the gorm model and its database operations
