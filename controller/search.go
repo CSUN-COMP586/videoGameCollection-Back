@@ -66,7 +66,7 @@ func SearchForGame(w http.ResponseWriter, r *http.Request) {
 	client := &http.Client{}
 	req, err := http.NewRequest(
 		http.MethodGet,
-		"https://api-endpoint.igdb.com/games/?search="+query+"&fields=id,name",
+		"https://api-endpoint.igdb.com/games/?search="+query+"&fields=id,name,summary,cover",
 		nil,
 	)
 	if err != nil {
