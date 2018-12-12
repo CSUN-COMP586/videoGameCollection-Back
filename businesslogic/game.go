@@ -28,6 +28,17 @@ type GameHandler struct {
 }
 
 func (handler GameHandler) CreateNewGameEntry(conn *gorm.DB) (uint, error) {
+	// check if the game is already in the record under the same account
+	check := Game{
+		AccountID: handler.Model.AccountID,
+		GameID:    handler.Model.GameID,
+	}
+	if conn.Where(&check).Find(&handler.Model).RecordNotFound() != true {
+		err := errors.New(handler.Model.GameName + " is in the collection")
+		return 0, err
+	}
+
+	// otherwise create a new entry
 	err := conn.Create(&handler.Model).Error
 	if err != nil {
 		return 0, err

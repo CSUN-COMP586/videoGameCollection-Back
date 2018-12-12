@@ -35,16 +35,17 @@ func AddGameEntry(w http.ResponseWriter, r *http.Request) {
 
 	// create new game entry to database
 	game.AccountID = accountID
-	fmt.Println(game)
 	gameHandler := businesslogic.GameHandler{Model: &game}
 	gameEntryID, err := gameHandler.CreateNewGameEntry(database.GormConn)
+
+	// if error in inserting game to database occurs
 	if err != nil {
 		fmt.Println("Error inserting game entry to database: ", err.Error())
+		response["message"] = err.Error()
+	} else {
+		response["message"] = "Successfully added game to database."
+		response["game_entry_id"] = gameEntryID
 	}
-
-	// encode new game entry id and success message
-	response["message"] = "Successfully added game to database."
-	response["game_entry_id"] = gameEntryID
 	responseJSON, err := json.Marshal(response)
 	if err != nil {
 		fmt.Println("Error encoding add game entry success message: ", err.Error())
