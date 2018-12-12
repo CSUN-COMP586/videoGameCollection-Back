@@ -3,7 +3,6 @@ package controller
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/videogamelibrary/businesslogic"
@@ -30,12 +29,13 @@ func AddGameEntry(w http.ResponseWriter, r *http.Request) {
 	// decode payload to game struct
 	game := businesslogic.Game{}
 	if err := json.NewDecoder(r.Body).Decode(&game); err != nil {
-		log.Fatal(err)
+		fmt.Println("Error decoding body to game struct: ", err.Error())
 		return
 	}
 
 	// create new game entry to database
 	game.AccountID = accountID
+	fmt.Println(game)
 	gameHandler := businesslogic.GameHandler{Model: &game}
 	gameEntryID, err := gameHandler.CreateNewGameEntry(database.GormConn)
 	if err != nil {
