@@ -2,6 +2,7 @@ package businesslogic
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/jinzhu/gorm"
 )
@@ -47,14 +48,16 @@ func (handler GameHandler) CreateNewGameEntry(conn *gorm.DB) (uint, error) {
 	return handler.Model.ID, nil
 }
 
-func (handler GameHandler) GetGameEntry(conn *gorm.DB) (*Game, error) {
+func (handler GameHandler) GetGameEntry(conn *gorm.DB, accountID uint) (*[]Game, error) {
+	var listOfGames []Game // slice of game to handle return
+
 	// return error if game is not in the collection
-	if conn.Where(&Game{GameID: handler.Model.GameID}).Find(&handler.Model).RecordNotFound() != false {
-		err := errors.New(handler.Model.GameName + " is not in the collection")
+	if conn.Where(&Game{AccountID: accountID}).Find(&listOfGames).RecordNotFound() != false {
+		err := errors.New("User with ID: " + fmt.Sprint(handler.Model.AccountID) + " is not in the collection")
 		return nil, err
 	}
 
-	return handler.Model, nil
+	return &listOfGames, nil
 }
 
 func (handler GameHandler) DeleteGameEntry(conn *gorm.DB) (int, error) {
