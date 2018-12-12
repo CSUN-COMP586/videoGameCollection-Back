@@ -2,7 +2,6 @@ package businesslogic
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"regexp"
 
@@ -118,6 +117,5 @@ func (handler AccountHandler) VerifyUID(conn *gorm.DB, userID string) (bool, err
 		err := errors.New("Invalid user identification")
 		return false, err
 	}
-	fmt.Println(handler.Model)
 	return true, nil
 }

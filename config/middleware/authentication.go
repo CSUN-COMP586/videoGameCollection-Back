@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"context"
-	"log"
+	"fmt"
 	"strings"
 
 	firebase "firebase.google.com/go"
@@ -22,13 +22,13 @@ func (handler AuthHandler) VerifyTokenAndReturnUID(app *firebase.App) string {
 
 	client, err := app.Auth(context.Background()) // initialize firebase client for auth
 	if err != nil {
-		log.Fatal("Error getting auth client: %v\n", err)
+		fmt.Println("Error getting auth client: ", err.Error())
 	}
 
 	ctx := context.Background()
 	token, err := client.VerifyIDToken(ctx, handler.Model.Token) // verify the token
 	if err != nil {
-		log.Fatalf("error verifying ID token: %v\n", err)
+		fmt.Println("Error verifying ID token: ", err.Error())
 	}
 
 	return token.UID // return UID
