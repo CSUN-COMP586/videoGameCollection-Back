@@ -42,20 +42,18 @@ func openDatabaseConnection(dialect string, dbConnectionString string) *gorm.DB 
 // MigrateDependencyTables - These functions should be used in their respective order
 // and should only be ran to create or recreate the tables in the database.
 func MigrateDependencyTables() {
-	GormConn.DropTableIfExists(
-		&businesslogic.Account{}, &businesslogic.Developer{},
-		&businesslogic.People{}, &businesslogic.Publisher{})
-	GormConn.AutoMigrate(
-		&businesslogic.Account{}, &businesslogic.Developer{},
-		&businesslogic.People{}, &businesslogic.Publisher{})
+	GormConn.DropTableIfExists(&businesslogic.Account{})
+	GormConn.AutoMigrate(&businesslogic.Account{})
 }
 
 // MigrateTables - as above
 func MigrateTables() {
 	GormConn.DropTableIfExists(
-		&businesslogic.Game{}, &businesslogic.Character{},
-		&businesslogic.History{}, &businesslogic.SearchHistory{})
+		&businesslogic.Game{},
+		&businesslogic.SearchHistory{},
+	)
 	GormConn.AutoMigrate(
-		&businesslogic.Game{}, &businesslogic.Character{},
-		&businesslogic.History{}, &businesslogic.SearchHistory{})
+		&businesslogic.Game{},
+		&businesslogic.SearchHistory{},
+	)
 }
