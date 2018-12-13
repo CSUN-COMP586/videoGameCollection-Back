@@ -2,6 +2,7 @@ package businesslogic
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/jinzhu/gorm"
 )
@@ -28,6 +29,17 @@ type GameHandler struct {
 }
 
 func (handler GameHandler) CreateNewGameEntry(conn *gorm.DB) (uint, error) {
+	// check if the game is already in the record under the same account
+	check := Game{
+		AccountID: handler.Model.AccountID,
+		GameID:    handler.Model.GameID,
+	}
+	if conn.Where(&check).Find(&handler.Model).RecordNotFound() != true {
+		err := errors.New(handler.Model.GameName + " is in the collection")
+		return 0, err
+	}
+
+	// otherwise create a new entry
 	err := conn.Create(&handler.Model).Error
 	if err != nil {
 		return 0, err
@@ -36,14 +48,16 @@ func (handler GameHandler) CreateNewGameEntry(conn *gorm.DB) (uint, error) {
 	return handler.Model.ID, nil
 }
 
-func (handler GameHandler) GetGameEntry(conn *gorm.DB) (*Game, error) {
+func (handler GameHandler) GetGameEntry(conn *gorm.DB, accountID uint) (*[]Game, error) {
+	var listOfGames []Game // slice of game to handle return
+
 	// return error if game is not in the collection
-	if conn.Where(&Game{GameID: handler.Model.GameID}).Find(&handler.Model).RecordNotFound() != false {
-		err := errors.New(handler.Model.GameName + " is not in the collection")
+	if conn.Where(&Game{AccountID: accountID}).Find(&listOfGames).RecordNotFound() != false {
+		err := errors.New("User with ID: " + fmt.Sprint(handler.Model.AccountID) + " is not in the collection")
 		return nil, err
 	}
 
-	return handler.Model, nil
+	return &listOfGames, nil
 }
 
 func (handler GameHandler) DeleteGameEntry(conn *gorm.DB) (int, error) {
