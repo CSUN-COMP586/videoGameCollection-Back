@@ -16,7 +16,7 @@ func main() {
 
 	router := routes.NewCollectionRouter()
 
-	// provision production port
+	// provision production
 
 	log.Fatal(http.ListenAndServe(":8080", handlers.CORS(
 		handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}),
