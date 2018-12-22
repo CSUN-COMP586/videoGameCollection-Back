@@ -5,8 +5,8 @@ import (
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"github.com/videogamelibrary/businesslogic"
 	"github.com/videogamelibrary/config/middleware"
+	"github.com/videogamelibrary/models"
 )
 
 // initialize environment variables
@@ -42,18 +42,18 @@ func openDatabaseConnection(dialect string, dbConnectionString string) *gorm.DB 
 // MigrateDependencyTables - These functions should be used in their respective order
 // and should only be ran to create or recreate the tables in the database.
 func MigrateDependencyTables() {
-	GormConn.DropTableIfExists(&businesslogic.Account{})
-	GormConn.AutoMigrate(&businesslogic.Account{})
+	GormConn.DropTableIfExists(&models.Account{})
+	GormConn.AutoMigrate(&models.Account{})
 }
 
 // MigrateTables - as above
 func MigrateTables() {
 	GormConn.DropTableIfExists(
-		&businesslogic.Game{},
-		&businesslogic.SearchHistory{},
+		&models.Game{},
+		&models.SearchHistory{},
 	)
 	GormConn.AutoMigrate(
-		&businesslogic.Game{},
-		&businesslogic.SearchHistory{},
+		&models.Game{},
+		&models.SearchHistory{},
 	)
 }
