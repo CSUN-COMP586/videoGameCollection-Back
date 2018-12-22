@@ -10,6 +10,7 @@ import (
 	"github.com/videogamelibrary/businesslogic"
 	"github.com/videogamelibrary/config/database"
 	"github.com/videogamelibrary/config/middleware"
+	"github.com/videogamelibrary/models"
 )
 
 func SearchForGame(w http.ResponseWriter, r *http.Request) {
@@ -29,7 +30,7 @@ func SearchForGame(w http.ResponseWriter, r *http.Request) {
 	query := vars["query"]
 
 	// create search history struct and insert to database
-	searchHistory := businesslogic.SearchHistory{
+	searchHistory := models.SearchHistory{
 		AccountID: accountID,
 		Query:     query,
 	}

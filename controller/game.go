@@ -8,6 +8,7 @@ import (
 	"github.com/videogamelibrary/businesslogic"
 	"github.com/videogamelibrary/config/database"
 	"github.com/videogamelibrary/config/middleware"
+	"github.com/videogamelibrary/models"
 )
 
 func AddGameEntry(w http.ResponseWriter, r *http.Request) {
@@ -23,7 +24,7 @@ func AddGameEntry(w http.ResponseWriter, r *http.Request) {
 	middleware.HandleFalseVerification(verifyStatus, w, err)
 
 	// decode payload to game struct
-	gameModel := businesslogic.Game{}
+	gameModel := models.Game{}
 	if err := json.NewDecoder(r.Body).Decode(&gameModel); err != nil {
 		fmt.Println("Error decoding body to game struct: ", err.Error())
 		return
@@ -65,7 +66,7 @@ func GetGameEntry(w http.ResponseWriter, r *http.Request) {
 	verifyStatus, accountID, err := middleware.VerifyToken(r, middleware.App, database.GormConn)
 	middleware.HandleFalseVerification(verifyStatus, w, err)
 
-	gameModel := businesslogic.Game{}
+	gameModel := models.Game{}
 	gameHandler := businesslogic.GameHandler{Model: &gameModel}
 	listOfGames, err := gameHandler.GetGameEntry(database.GormConn, accountID)
 	if err != nil {

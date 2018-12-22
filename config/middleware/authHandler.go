@@ -9,6 +9,7 @@ import (
 	firebase "firebase.google.com/go"
 	"github.com/jinzhu/gorm"
 	"github.com/videogamelibrary/businesslogic"
+	"github.com/videogamelibrary/models"
 )
 
 func VerifyToken(r *http.Request, app *firebase.App, conn *gorm.DB) (bool, uint, error) {
@@ -19,7 +20,7 @@ func VerifyToken(r *http.Request, app *firebase.App, conn *gorm.DB) (bool, uint,
 	UID := authHandler.VerifyTokenAndReturnUID(app)
 
 	// verify uid and return verification status and account model
-	account := businesslogic.Account{}
+	account := models.Account{}
 	accountHandler := businesslogic.AccountHandler{Model: &account}
 	verifyStatus, err := accountHandler.VerifyUID(conn, UID)
 	if err != nil {

@@ -4,17 +4,15 @@ import (
 	"fmt"
 
 	"github.com/jinzhu/gorm"
+	"github.com/videogamelibrary/models"
 )
 
-// Search model for database
-type SearchHistory struct {
-	gorm.Model
-	AccountID uint   `gorm:"NOT NULL;REFERENCES ACCOUNTS(ID)"`
-	Query     string `gorm:"TYPE:TEXT;NOT NULL"`
+type ISearchHistoryHandler interface {
+	CreateNewEntry()
 }
 
 type SearchHistoryHandler struct {
-	Model *SearchHistory
+	Model *models.SearchHistory
 }
 
 func (handler SearchHistoryHandler) CreateNewEntry(conn *gorm.DB) {

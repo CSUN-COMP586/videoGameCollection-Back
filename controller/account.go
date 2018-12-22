@@ -9,6 +9,7 @@ import (
 	"github.com/videogamelibrary/businesslogic"
 	"github.com/videogamelibrary/config/database"
 	"github.com/videogamelibrary/config/middleware"
+	"github.com/videogamelibrary/models"
 )
 
 func CreateNewAccount(w http.ResponseWriter, r *http.Request) {
@@ -18,7 +19,7 @@ func CreateNewAccount(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// decode payload into account struct
-	account := businesslogic.Account{}
+	account := models.Account{}
 	if err := json.NewDecoder(r.Body).Decode(&account); err != nil {
 		log.Fatal(err)
 		return
@@ -68,7 +69,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	creds.UID = authHandler.VerifyTokenAndReturnUID(middleware.App)
 
 	// create account handler and account struct, then get account to login
-	account := businesslogic.Account{}
+	account := models.Account{}
 	accountHandler := businesslogic.AccountHandler{
 		Model: &account,
 	}
