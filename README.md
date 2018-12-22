@@ -42,7 +42,3 @@ To launch the application locally:
     2.  In main.go uncomment database.MigrateDependencyTables and database.MigrateDependency
     3.  Run "go run main.go" once to build the tables in postgres, then uncomment the commands
     4.  Run "go run main.go" again to start the server.    
-
- 
-
-
