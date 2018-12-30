@@ -12,9 +12,9 @@ func NewCollectionRouter() http.Handler {
 	router.Schemes("https")
 	router.HandleFunc("/", temp)
 
-	mount(router, "/game/", GameRouter()) // sub-routes
-	mount(router, "/search/", SearchRouter())
-	mount(router, "/account/", AccountRouter())
+	mount(router, "/api/game/", GameRouter()) // sub-routes
+	mount(router, "/api/search/", SearchRouter())
+	mount(router, "/api/account/", AccountRouter())
 
 	return router
 }
