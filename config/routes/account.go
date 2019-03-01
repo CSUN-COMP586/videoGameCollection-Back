@@ -7,6 +7,7 @@ import (
 	"github.com/videogamelibrary/controller"
 )
 
+// AccountRouter - account subroutes
 func AccountRouter() http.Handler {
 	router := mux.NewRouter()
 

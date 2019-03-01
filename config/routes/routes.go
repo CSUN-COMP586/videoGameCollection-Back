@@ -7,23 +7,23 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// NewCollectionRouter - initializes the router and mounts the sub routes
 func NewCollectionRouter() http.Handler {
 	router := mux.NewRouter().StrictSlash(true)
 	router.Schemes("https")
-	router.HandleFunc("/", temp)
+	router.HandleFunc("/", home)
 
-	mount(router, "/api/game/", GameRouter()) // sub-routes
+	mount(router, "/api/game/", GameRouter())
 	mount(router, "/api/search/", SearchRouter())
 	mount(router, "/api/account/", AccountRouter())
 
 	return router
 }
 
-func temp(w http.ResponseWriter, r *http.Request) {
+func home(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Home"))
 }
 
-// function to mount the sub-routes
 func mount(r *mux.Router, path string, handler http.Handler) {
 	r.PathPrefix(path).Handler(
 		http.StripPrefix(

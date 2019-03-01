@@ -7,6 +7,7 @@ import (
 	"github.com/videogamelibrary/controller"
 )
 
+// SearchRouter - search subroute
 func SearchRouter() http.Handler {
 	router := mux.NewRouter()
 
