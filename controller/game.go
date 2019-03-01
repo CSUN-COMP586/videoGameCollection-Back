@@ -20,7 +20,7 @@ func AddGameEntry(w http.ResponseWriter, r *http.Request) {
 	response := make(map[string]interface{})
 
 	// verify token and handle false verification status
-	verifyStatus, accountID, err := middleware.VerifyToken(r, middleware.App, database.GormConn)
+	verifyStatus, accountID, err := middleware.VerifyToken(r, middleware.FireApp, database.GormConn)
 	middleware.HandleFalseVerification(verifyStatus, w, err)
 
 	// decode payload to game struct
@@ -63,7 +63,7 @@ func GetGameEntry(w http.ResponseWriter, r *http.Request) {
 	response := make(map[string]interface{})
 
 	// verify token and handle false verification status
-	verifyStatus, accountID, err := middleware.VerifyToken(r, middleware.App, database.GormConn)
+	verifyStatus, accountID, err := middleware.VerifyToken(r, middleware.FireApp, database.GormConn)
 	middleware.HandleFalseVerification(verifyStatus, w, err)
 
 	gameModel := models.Game{}
@@ -88,5 +88,42 @@ func GetGameEntry(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteGameEntry(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Delete game working"))
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not supported", 405)
+		return
+	}
+
+	response := make(map[string]interface{})
+
+	// verify token and handle false verification status
+	verifyStatus, accountID, err := middleware.VerifyToken(r, middleware.FireApp, database.GormConn)
+	middleware.HandleFalseVerification(verifyStatus, w, err)
+	fmt.Println("verification status: ", verifyStatus)
+	fmt.Println("account id: ", accountID)
+	// decode payload to game struct
+	gameModel := models.Game{}
+	if err := json.NewDecoder(r.Body).Decode(&gameModel); err != nil {
+		fmt.Println("Error decoding body to game struct: ", err.Error())
+		return
+	}
+	fmt.Println("game model: ", &gameModel)
+	// delete game entry to database
+	gameModel.AccountID = accountID
+	gameHandler := businesslogic.GameHandler{Model: &gameModel}
+	err = gameHandler.DeleteGameEntry(database.GormConn)
+	if err != nil {
+		fmt.Println("Error deleting game from collection: ", err.Error())
+		response["response"] = err.Error()
+	} else {
+		response["response"] = "Successfully deleted " + gameHandler.Model.GameName + " from collection"
+	}
+	fmt.Println("response: ", response["response"])
+	responseJSON, err := json.Marshal(response)
+	if err != nil {
+		fmt.Println("Error encoding JSON games response: ", err.Error())
+	}
+	fmt.Println("json response: ", responseJSON)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	w.Write(responseJSON)
 }

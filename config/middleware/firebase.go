@@ -10,12 +10,12 @@ import (
 )
 
 // App the firebase application variable to be passed around other files
-var App *firebase.App
+var FireApp *firebase.App
 
 func init() {
 	var err error
 	opt := option.WithCredentialsFile(os.Getenv("FIREBASE_SERVICE_ACCOUNT_PATH"))
-	App, err = firebase.NewApp(context.Background(), nil, opt)
+	FireApp, err = firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
 		log.Fatalf("error initializing app: %v\n", err)
 	}

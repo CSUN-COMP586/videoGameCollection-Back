@@ -20,7 +20,7 @@ func SearchForGame(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// verify token, return status of verification, users account id, and potential errors
-	verifyStatus, accountID, err := middleware.VerifyToken(r, middleware.App, database.GormConn)
+	verifyStatus, accountID, err := middleware.VerifyToken(r, middleware.FireApp, database.GormConn)
 
 	// if status is false, send response to front end
 	middleware.HandleFalseVerification(verifyStatus, w, err)

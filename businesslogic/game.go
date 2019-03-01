@@ -51,13 +51,18 @@ func (handler GameHandler) GetGameEntry(conn *gorm.DB, accountID uint) (*[]model
 	return &listOfGames, nil
 }
 
-func (handler GameHandler) DeleteGameEntry(conn *gorm.DB) (int, error) {
+func (handler GameHandler) DeleteGameEntry(conn *gorm.DB) error {
+	game := models.Game{
+		AccountID: handler.Model.AccountID,
+		GameName:  handler.Model.GameName,
+	}
+
 	// return error if game is not in the collection
-	if conn.Where(&models.Game{GameName: handler.Model.GameName}).Find(&handler.Model).RecordNotFound() != false {
+	if conn.Where(&game).Find(&handler.Model).RecordNotFound() != false {
 		err := errors.New(handler.Model.GameName + " cannot be deleted because it is not in the collection")
-		return 0, err
+		return err
 	}
 	conn.Unscoped().Where(&models.Game{GameName: handler.Model.GameName}).Delete(&handler.Model)
 
-	return 1, nil
+	return nil
 }
