@@ -2,7 +2,7 @@ package models
 
 import "github.com/jinzhu/gorm"
 
-// Search model for database
+// SearchHistory model for database
 type SearchHistory struct {
 	gorm.Model
 	AccountID uint   `gorm:"NOT NULL;REFERENCES ACCOUNTS(ID)"`

@@ -11,8 +11,10 @@ import (
 )
 
 func main() {
-	// database.MigrateDependencyTables()
+	// // Drop old tables and create new ones
 	// database.MigrateTables()
+	// database.MigrateDependentTables()
+
 	defer database.GormConn.Close()
 
 	router := routes.NewCollectionRouter()

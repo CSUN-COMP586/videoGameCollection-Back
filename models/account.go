@@ -5,7 +5,7 @@ import "github.com/jinzhu/gorm"
 // Account model for database
 type Account struct {
 	gorm.Model
-	UID           string `gorm:"TYPE:TEXT;UNIQUE`
+	UID           string `gorm:"TYPE:TEXT;UNIQUE"`
 	Username      string `gorm:"TYPE:VARCHAR(16);UNIQUE;NOT NULL;INDEX"`
 	FirstName     string `gorm:"TYPE:VARCHAR(64);NOT NULL"`
 	LastName      string `gorm:"TYPE:VARCHAR(64);NOT NULL"`
