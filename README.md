@@ -3,33 +3,13 @@
 Welcome to the video game library CSUN-COMP586 repository.
 
 The purpose of this project is to learn the processes, patterns, and
-school of thought into creating an application using MVC architecture.
+school of thought into creating an application using MVC architecture and SOLID principles.
 
-Professor:
-  I know you don't read Go professor so here are some notes in reading the language.
-  1.  Go doesn't have traditional classes, but instead used structs in combination with
-      reciever functions.  Usually declared as such "func (h Handler) DoSomething(n string)"
-  2.  The languages convention is to be verbose so each function name should act as the comment.
-  3.  Go has a lot of double variable declarations as returns from functions.  They return
-      a possible error in this way.
-  4.  Any structs using a Go interface only has to have the same reciever functions defined
-      in order to fullfil the interface contract.
+Since the inception of this project, I have learned many more things about back-end 
+development, and as such, will continue to polish this project with the main purpose of
+being an example of my back-end work.
 
-Requirements:
-  1.  SPA
-  2.  MVC
-  3.  ORM
-  4.  DI
-  5.  Auth
-
-Notes:
-  1.  Firebase and the database are used as dependency injections
-  2.  Authentication is handled by firebase
-  3.  ORM is handled by GORM package
-  4.  I believe the application is fairly decoupled, businesslogic and controllers are separate
-      with any configuration dependencies injected in.
-  5.  Communication with the front end is handled by Go's native net/http package
-  6.  Routing is handled by Gorilla/Mux which is a package built on top of net/http package  
+This API is hosted on AWS EC2 and uses Nginx to communicate with the front-end.
 
 To launch the application locally:
   1.  PostGreSQL 9.5.14
