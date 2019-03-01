@@ -2,58 +2,37 @@ package database
 
 import (
 	"log"
+	"os"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"github.com/videogamelibrary/config/middleware"
-	"github.com/videogamelibrary/models"
+	"github.com/joho/godotenv"
 )
 
-// initialize environment variables
-var (
-	DBNAME             = middleware.GetEnv("DBNAME", "vglib")
-	DBUSER             = middleware.GetEnv("DBUSER", "vglibdev")
-	DBPASS             = middleware.GetEnv("DBPASS", "abc123vglib")
-	dbConnectionString = "user=" + DBUSER + " password=" + DBPASS + " dbname=" + DBNAME + " sslmode=disable"
-	dialect            = "postgres"
-)
-
-// this pointer variable is initialized with the database connection and can then be called
-// for a dependency injection in other packages
+// GormConn - database connection variable for dependency injection
 var GormConn *gorm.DB
 
-func init() {
-	GormConn = openDatabaseConnection(dialect, dbConnectionString)
-}
-
-// private functions for connecting to the database
 func openDatabaseConnection(dialect string, dbConnectionString string) *gorm.DB {
-	var db *gorm.DB
-	var err error
-
-	db, err = gorm.Open(dialect, dbConnectionString)
+	db, err := gorm.Open(dialect, dbConnectionString)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Error connecting to the database", err)
 	}
 
 	return db
 }
 
-// MigrateDependencyTables - These functions should be used in their respective order
-// and should only be ran to create or recreate the tables in the database.
-func MigrateDependencyTables() {
-	GormConn.DropTableIfExists(&models.Account{})
-	GormConn.AutoMigrate(&models.Account{})
-}
+// Load configuration files, initialize variables, and open the database connection
+func init() {
+	err := godotenv.Load("vgConfig.env") // load environment variables
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 
-// MigrateTables - as above
-func MigrateTables() {
-	GormConn.DropTableIfExists(
-		&models.Game{},
-		&models.SearchHistory{},
-	)
-	GormConn.AutoMigrate(
-		&models.Game{},
-		&models.SearchHistory{},
-	)
+	dbName := os.Getenv("DBNAME")
+	dbUser := os.Getenv("DBUSER")
+	dbPass := os.Getenv("DBPASS")
+	dbConnectionString := "user=" + dbUser + " password=" + dbPass + " dbname=" + dbName + " sslmode=disable"
+	dialect := os.Getenv("DATABASE")
+
+	GormConn = openDatabaseConnection(dialect, dbConnectionString)
 }

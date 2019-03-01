@@ -12,6 +12,7 @@ import (
 	"github.com/videogamelibrary/models"
 )
 
+// VerifyToken - verifies the jwt and returns the account related to jwt
 func VerifyToken(r *http.Request, app *firebase.App, conn *gorm.DB) (bool, uint, error) {
 	// verify token and return uid
 	idToken := r.Header.Get("authorization")
@@ -31,6 +32,7 @@ func VerifyToken(r *http.Request, app *firebase.App, conn *gorm.DB) (bool, uint,
 	return verifyStatus, accountHandler.Model.ID, nil
 }
 
+// HandleFalseVerification - Returns an error header response for unverified UIDa
 func HandleFalseVerification(verifyStatus bool, w http.ResponseWriter, err error) {
 	response := make(map[string]interface{})
 
